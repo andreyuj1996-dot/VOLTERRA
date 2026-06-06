@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volterra · Hongos frescos de Costa Rica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#ECE4D0; --paper:#F4EFE1; --paper-2:#F8F4E9;
+    --ink:#222B45; --ink-2:#374164; --ink-soft:#5a6585;
+    --wine:#5C1E30; --wine-deep:#461724; --brass:#A9824C; --brass-l:#c19a63;
+    --olive:#6E6A52; --porto:#5A3A2A; --navy-prod:#3A4A6B;
+    --line:rgba(34,43,69,.18);
+    --shadow:0 24px 60px -28px rgba(34,43,69,.45);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Jost',sans-serif;color:var(--ink);background:var(--cream);
+    -webkit-font-smoothing:antialiased;line-height:1.65;font-weight:300;overflow-x:hidden;
+    background-image:radial-gradient(circle at 20% 10%,rgba(169,130,76,.06),transparent 40%),
+                     radial-gradient(circle at 85% 80%,rgba(92,30,48,.05),transparent 45%);
+  }
+  h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;font-weight:500;line-height:1.1}
+  .script{font-family:'Pinyon Script',cursive;font-weight:400}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:var(--brass);font-weight:400}
+  .serif-caps{font-family:'Cormorant Garamond',serif;letter-spacing:.32em;text-transform:uppercase}
+  a{color:inherit;text-decoration:none}
+
+  /* ---- Starburst emblem ---- */
+  .burst{display:inline-block;vertical-align:middle}
+
+  /* ---- NAV ---- */
+  header.nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:.4s;
+    background:rgba(236,228,208,0);border-bottom:1px solid transparent}
+  header.nav.scrolled{background:rgba(238,231,214,.92);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:78px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{width:30px;height:30px}
+  .brand .name{font-family:'Cormorant Garamond',serif;font-size:1.55rem;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--ink);padding-left:.34em}
+  nav ul{display:flex;gap:34px;list-style:none}
+  nav a{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2);position:relative}
+  nav a::after{content:'';position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--brass);transition:.35s}
+  nav a:hover::after{width:100%}
+  .nav-cta{border:1px solid var(--ink);padding:10px 20px;font-size:.72rem;letter-spacing:.2em;
+    text-transform:uppercase;transition:.35s;border-radius:1px}
+  .nav-cta:hover{background:var(--ink);color:var(--paper-2)}
+  .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:0}
+  .burger span{width:24px;height:1.5px;background:var(--ink);transition:.3s}
+
+  /* ---- HERO ---- */
+  .hero{padding:170px 0 90px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
+  .hero .eyebrow{margin-bottom:22px}
+  .hero h1{font-size:clamp(3.4rem,8vw,6.6rem);letter-spacing:.06em;color:var(--ink);margin-bottom:6px}
+  .hero .tag{font-family:'Pinyon Script',cursive;font-size:clamp(2rem,4.5vw,3rem);color:var(--wine);
+    margin:-6px 0 26px;line-height:1}
+  .hero p.lead{font-size:1.06rem;color:var(--ink-2);max-width:30em;margin-bottom:34px;font-weight:300}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;font-size:.76rem;
+    letter-spacing:.2em;text-transform:uppercase;transition:.4s;border-radius:1px;cursor:pointer;border:1px solid var(--ink)}
+  .btn-solid{background:var(--ink);color:var(--paper-2);border-color:var(--ink)}
+  .btn-solid:hover{background:var(--wine);border-color:var(--wine)}
+  .btn-ghost:hover{background:var(--ink);color:var(--paper-2)}
+  /* arched hero image */
+  .arch{position:relative;border:1px solid var(--line);border-radius:50% 50% 6px 6px/24% 24% 6px 6px;
+    padding:14px;background:var(--paper);box-shadow:var(--shadow)}
+  .arch .frame{border:1px solid var(--brass);border-radius:50% 50% 4px 4px/24% 24% 4px 4px;overflow:hidden;aspect-ratio:4/4.4}
+  .arch img{width:100%;height:100%;object-fit:cover;display:block;transition:.8s}
+  .arch:hover img{transform:scale(1.04)}
+  .arch .emblem-top{position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+    width:52px;height:52px;background:var(--cream);border-radius:50%;display:grid;place-items:center;border:1px solid var(--line)}
+
+  /* image fallback */
+  .imgwrap{position:relative;width:100%;height:100%;background:
+     linear-gradient(135deg,var(--paper-2),var(--cream));}
+  .imgwrap img{position:relative;z-index:1}
+  .imgwrap .fb{position:absolute;inset:0;display:grid;place-items:center;z-index:0}
+
+  /* ---- section heading ---- */
+  .sec{padding:96px 0}
+  .sec-head{text-align:center;max-width:46em;margin:0 auto 58px}
+  .sec-head h2{font-size:clamp(2.4rem,5vw,3.6rem);margin:14px 0 12px;letter-spacing:.02em}
+  .sec-head p{color:var(--ink-2);font-size:1.02rem}
+  .rule{width:64px;height:1px;background:var(--brass);margin:18px auto 0;position:relative}
+  .rule::before{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%) rotate(45deg);
+    width:6px;height:6px;background:var(--brass)}
+
+  /* ---- NOSOTROS ---- */
+  #nosotros{background:linear-gradient(180deg,transparent,rgba(248,244,233,.6),transparent)}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+  .about-copy .eyebrow{margin-bottom:14px}
+  .about-copy h2{font-size:clamp(2.2rem,4.5vw,3.2rem);margin-bottom:22px}
+  .about-copy p{color:var(--ink-2);margin-bottom:18px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:34px;border-top:1px solid var(--line);padding-top:28px}
+  .stat .num{font-family:'Cormorant Garamond',serif;font-size:2.6rem;color:var(--wine);line-height:1}
+  .stat .lbl{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);margin-top:6px}
+  .about-art{position:relative}
+  .about-art .arch{border-radius:6px;}
+  .about-art .frame{border-radius:4px;aspect-ratio:1/1.08}
+
+  /* ---- PRODUCTOS ---- */
+  #productos{background:var(--ink);color:var(--paper);position:relative}
+  #productos .eyebrow{color:var(--brass-l)}
+  #productos .sec-head h2{color:var(--paper-2)}
+  #productos .sec-head p{color:rgba(244,239,225,.7)}
+  .prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .card{background:var(--paper);color:var(--ink);border-radius:4px;overflow:hidden;
+    box-shadow:0 30px 60px -34px rgba(0,0,0,.6);display:flex;flex-direction:column;
+    transition:.5s;border:1px solid rgba(0,0,0,.04)}
+  .card:hover{transform:translateY(-8px)}
+  .card .ph{aspect-ratio:4/3;overflow:hidden;position:relative}
+  .card .ph img{width:100%;height:100%;object-fit:cover;transition:.8s}
+  .card:hover .ph img{transform:scale(1.06)}
+  .card .accent{height:4px}
+  .card .body{padding:24px 24px 28px}
+  .card .kicker{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--brass)}
+  .card h3{font-size:1.7rem;margin:6px 0 10px}
+  .card p{font-size:.92rem;color:var(--ink-2)}
+  .card .pres{margin-top:16px;font-size:.72rem;letter-spacing:.08em;color:var(--ink-2);
+    border-top:1px solid var(--line);padding-top:12px}
+
+  /* ---- INOCUIDAD ---- */
+  .certs{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-bottom:18px}
+  .cert{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:36px 26px;text-align:center;
+    position:relative;transition:.45s}
+  .cert:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+  .seal{width:74px;height:74px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;
+    border:1.5px solid var(--brass);color:var(--wine);position:relative}
+  .seal::after{content:'';position:absolute;inset:5px;border:1px solid var(--line);border-radius:50%}
+  .cert .yr{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--brass);letter-spacing:.2em}
+  .cert h3{font-size:1.5rem;margin:6px 0 8px}
+  .cert p{font-size:.86rem;color:var(--ink-2)}
+
+  /* ---- MISION band ---- */
+  #mision{background:var(--ink);color:var(--paper)}
+  #mision .eyebrow{color:var(--brass-l)}
+  .mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin-bottom:50px}
+  .mv{border-left:2px solid var(--brass);padding-left:26px}
+  .mv h3{font-size:1.8rem;color:var(--paper-2);margin-bottom:12px}
+  .mv h3 .script{color:var(--brass-l);font-size:2.1rem;display:block;line-height:1}
+  .mv p{color:rgba(244,239,225,.82);font-size:1rem}
+  .values{border-top:1px solid rgba(244,239,225,.18);padding-top:40px}
+  .values .vh{text-align:center;margin-bottom:30px}
+  .values .vh h3{font-size:2rem;color:var(--paper-2)}
+  .vlist{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .vitem{text-align:center}
+  .vitem .vi{width:46px;height:46px;margin:0 auto 12px;border:1px solid var(--brass-l);border-radius:50%;
+    display:grid;place-items:center;color:var(--brass-l)}
+  .vitem h4{font-size:1.15rem;color:var(--paper-2);letter-spacing:.02em}
+  .vitem p{font-size:.8rem;color:rgba(244,239,225,.66);margin-top:4px;line-height:1.5}
+
+  /* ---- CONTACTO ---- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+  .contact-copy h2{font-size:clamp(2.2rem,4.5vw,3.2rem);margin:12px 0 16px}
+  .contact-copy p{color:var(--ink-2);margin-bottom:30px;max-width:30em}
+  .cinfo{list-style:none;display:flex;flex-direction:column;gap:2px}
+  .cinfo li{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--line)}
+  .cinfo li:last-child{border-bottom:1px solid var(--line)}
+  .cinfo .ic{width:38px;height:38px;border:1px solid var(--brass);border-radius:50%;display:grid;place-items:center;
+    color:var(--wine);flex-shrink:0}
+  .cinfo .k{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}
+  .cinfo .v{font-size:1.02rem;color:var(--ink)}
+  .contact-art{display:grid;place-items:center}
+  .crest{width:300px;height:300px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;
+    position:relative;background:var(--paper)}
+  .crest::after{content:'';position:absolute;inset:14px;border:1px solid var(--brass);border-radius:50%}
+  .crest .inner{text-align:center;z-index:1;padding:30px}
+  .crest .inner .name{font-family:'Cormorant Garamond',serif;font-size:2rem;letter-spacing:.3em;text-transform:uppercase}
+  .crest .inner .sub{font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2);margin-top:6px}
+
+  /* ---- FOOTER ---- */
+  footer{background:var(--ink);color:rgba(244,239,225,.7);padding:64px 0 30px;border-top:3px solid var(--wine)}
+  .foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;padding-bottom:40px;
+    border-bottom:1px solid rgba(244,239,225,.14)}
+  .foot-brand .name{font-family:'Cormorant Garamond',serif;font-size:1.8rem;letter-spacing:.34em;
+    text-transform:uppercase;color:var(--paper-2);display:flex;align-items:center;gap:12px}
+  .foot-brand p{margin-top:16px;font-size:.9rem;max-width:26em}
+  .foot-col h4{font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--brass-l);margin-bottom:16px}
+  .foot-col a,.foot-col p{display:block;font-size:.9rem;margin-bottom:9px;color:rgba(244,239,225,.7)}
+  .foot-col a:hover{color:var(--paper-2)}
+  .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .badge{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(244,239,225,.28);
+    padding:6px 10px;border-radius:1px;color:rgba(244,239,225,.8)}
+  .foot-bottom{padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:.74rem;letter-spacing:.08em;color:rgba(244,239,225,.5)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(26px);transition:.9s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:900px){
+    nav ul,.nav-cta{display:none}
+    .burger{display:flex}
+    .hero-grid,.about-grid,.contact-grid,.mv-grid{grid-template-columns:1fr;gap:44px}
+    .hero .arch{max-width:420px;margin:0 auto}
+    .prod-grid,.certs{grid-template-columns:1fr}
+    .vlist{grid-template-columns:repeat(2,1fr)}
+    .stats{grid-template-columns:repeat(3,1fr)}
+    .foot-top{grid-template-columns:1fr;gap:30px}
+    .mobile-menu.open{display:flex}
+  }
+  .mobile-menu{display:none;position:fixed;inset:0;z-index:49;background:var(--ink);
+    flex-direction:column;align-items:center;justify-content:center;gap:26px}
+  .mobile-menu a{color:var(--paper-2);font-family:'Cormorant Garamond',serif;font-size:1.8rem;letter-spacing:.1em}
+  .mobile-menu .close{position:absolute;top:26px;right:28px;font-size:2rem;color:var(--paper-2);background:none;border:0}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#inicio" class="brand">
+      <svg class="mark" viewBox="0 0 100 100" aria-hidden="true">
+        <g stroke="#222B45" stroke-width="2.4" stroke-linecap="round">
+          <circle cx="50" cy="50" r="9" fill="none"/>
+          <g id="rays"></g>
+        </g>
+      </svg>
+      <span class="name">Volterra</span>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#productos">Productos</a></li>
+        <li><a href="#inocuidad">Inocuidad</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <a href="mailto:pedidos@gabcr.com" class="nav-cta">Hacer un pedido</a>
+    <button class="burger" id="burger" aria-label="Menú"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close" id="closeMenu" aria-label="Cerrar">&times;</button>
+  <a href="#nosotros">Nosotros</a>
+  <a href="#productos">Productos</a>
+  <a href="#inocuidad">Inocuidad</a>
+  <a href="#contacto">Contacto</a>
+  <a href="mailto:pedidos@gabcr.com" style="font-size:1rem;letter-spacing:.2em;border:1px solid var(--brass-l);padding:12px 24px;color:var(--brass-l)">Hacer un pedido</a>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <div class="eyebrow">Hongos frescos · Costa Rica</div>
+      <h1>Volterra</h1>
+      <div class="tag">del campo a su mesa</div>
+      <p class="lead">Champiñones frescos cultivados con precisión en las tierras altas de Cartago. La mayor producción de hongos del país, con la inocuidad y la calidad como sello de cada cosecha.</p>
+      <div class="hero-ctas">
+        <a href="#productos" class="btn btn-solid">Ver productos</a>
+        <a href="#nosotros" class="btn btn-ghost">Conózcanos</a>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="arch">
+        <div class="emblem-top">
+          <svg width="30" height="30" viewBox="0 0 100 100"><g stroke="#A9824C" stroke-width="2.6" stroke-linecap="round"><circle cx="50" cy="50" r="8" fill="none"/><g class="rays2"></g></g></svg>
+        </div>
+        <div class="frame">
+          <div class="imgwrap">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Fresh_%287550063418%29.jpg/1000px-Fresh_%287550063418%29.jpg" alt="Champiñones frescos Agaricus bisporus" loading="eager" onerror="fb(this)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOSOTROS ============ -->
+<section class="sec" id="nosotros">
+  <div class="wrap about-grid">
+    <div class="about-copy reveal">
+      <div class="eyebrow">Sobre nosotros</div>
+      <h2>Una cosecha nacida en Cartago</h2>
+      <p>Fundada en octubre de 2019 por familias cartaginesas con amplia trayectoria en el mercado de los hongos frescos, <strong>Agaricus Bisporus S.A.</strong> se dedica al cultivo de champiñones de la variedad <em>Agaricus bisporus</em> en su planta de San Rafael de Oreamuno.</p>
+      <p>En pocos años se ha consolidado como uno de los principales productores del país y la mayor planta de champiñones de Costa Rica, con el respaldo de socios comerciales, un equipo calificado y procesos de producción en mejora continua. Bajo la marca <strong>Volterra</strong>, llevamos a cada mesa un producto fresco, estable y de calidad constante.</p>
+      <div class="stats">
+        <div class="stat"><div class="num">2019</div><div class="lbl">Año de fundación</div></div>
+        <div class="stat"><div class="num">25<span style="font-size:1.1rem"> t</span></div><div class="lbl">Producción mensual</div></div>
+        <div class="stat"><div class="num">5</div><div class="lbl">Variedades</div></div>
+      </div>
+    </div>
+    <div class="about-art reveal">
+      <div class="arch">
+        <div class="frame">
+          <div class="imgwrap">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Agaricus_bisporus_Zuchtchampignon.JPG/1000px-Agaricus_bisporus_Zuchtchampignon.JPG" alt="Cultivo de champiñones Volterra" loading="lazy" onerror="fb(this)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRODUCTOS ============ -->
+<section class="sec" id="productos">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Nuestros productos</div>
+      <h2>La familia Volterra</h2>
+      <div class="rule"></div>
+      <p style="margin-top:22px">Champiñones frescos en distintas variedades y presentaciones, empacados y sellados para conservar su frescura del campo a su mesa.</p>
+    </div>
+    <div class="prod-grid">
+
+      <article class="card reveal">
+        <div class="ph"><div class="imgwrap"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Agaricus_bisporus_Zuchtchampignon.JPG/1000px-Agaricus_bisporus_Zuchtchampignon.JPG" alt="Hongo blanco entero" loading="lazy" onerror="fb(this)"></div></div>
+        <div class="accent" style="background:var(--navy-prod)"></div>
+        <div class="body">
+          <div class="kicker">Champiñón</div>
+          <h3>Blanco Entero</h3>
+          <p>El clásico champiñón blanco, de sabor suave y versátil. Coloración limpia y textura firme para cualquier preparación.</p>
+          <div class="pres">Bandejas de 125 g · 250 g · 500 g · 650 g</div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="ph"><div class="imgwrap"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Sliced_champignons.jpg/1000px-Sliced_champignons.jpg" alt="Hongo blanco rebanado" loading="lazy" onerror="fb(this)"></div></div>
+        <div class="accent" style="background:var(--brass)"></div>
+        <div class="body">
+          <div class="kicker">Champiñón</div>
+          <h3>Blanco Rebanado</h3>
+          <p>Listo para usar. Rebanado uniforme que ahorra tiempo en la cocina sin sacrificar frescura ni sabor.</p>
+          <div class="pres">Bandejas de 250 g · 500 g · 650 g</div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="ph"><div class="imgwrap"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Light_brown_bisporus_mushroom.jpg/1000px-Light_brown_bisporus_mushroom.jpg" alt="Hongo crimini" loading="lazy" onerror="fb(this)"></div></div>
+        <div class="accent" style="background:var(--wine)"></div>
+        <div class="body">
+          <div class="kicker">Variedad café</div>
+          <h3>Crimini</h3>
+          <p>El champiñón en su estado café: sabor más intenso y terroso, con una textura más firme y carnosa.</p>
+          <div class="pres">Bandejas de 250 g · 500 g</div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="ph"><div class="imgwrap"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Portobello_mushrooms_with_black_and_white.jpg/1000px-Portobello_mushrooms_with_black_and_white.jpg" alt="Hongo portobello" loading="lazy" onerror="fb(this)"></div></div>
+        <div class="accent" style="background:var(--porto)"></div>
+        <div class="body">
+          <div class="kicker">Madurez plena</div>
+          <h3>Portobello</h3>
+          <p>El crimini maduro, de gran tamaño y carnosidad. Ideal para asar, rellenar o como sustituto vegetal.</p>
+          <div class="pres">Bandejas de 300 g · 453 g</div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="ph"><div class="imgwrap"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Pleurotus_ostreatus_2.jpg/1000px-Pleurotus_ostreatus_2.jpg" alt="Hongo ostra" loading="lazy" onerror="fb(this)"></div></div>
+        <div class="accent" style="background:var(--olive)"></div>
+        <div class="body">
+          <div class="kicker">Especialidad</div>
+          <h3>Ostra</h3>
+          <p>De textura aterciopelada y sabor delicado. Una opción gourmet que aporta versatilidad a la mesa.</p>
+          <div class="pres">Bandeja de 200 g</div>
+        </div>
+      </article>
+
+      <article class="card reveal" style="display:flex;align-items:center;justify-content:center;background:transparent;border:1px dashed rgba(244,239,225,.3);box-shadow:none;color:var(--paper)">
+        <div class="body" style="text-align:center">
+          <svg width="34" height="34" viewBox="0 0 100 100" style="margin-bottom:14px"><g stroke="#c19a63" stroke-width="3" stroke-linecap="round" fill="none"><circle cx="50" cy="50" r="9"/><g class="rays3"></g></g></svg>
+          <h3 style="color:var(--paper-2)">Marca propia y maquila</h3>
+          <p style="color:rgba(244,239,225,.72)">Producción etiquetada bajo su propia marca o la de terceros, en los gramajes que su negocio necesite.</p>
+          <a href="mailto:pedidos@gabcr.com" style="display:inline-block;margin-top:18px;color:var(--brass-l);letter-spacing:.2em;font-size:.74rem;text-transform:uppercase;border-bottom:1px solid var(--brass-l);padding-bottom:4px">Consultar &rarr;</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ INOCUIDAD ============ -->
+<section class="sec" id="inocuidad">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Compromiso con la inocuidad</div>
+      <h2>La inocuidad no se negocia</h2>
+      <div class="rule"></div>
+      <p style="margin-top:22px">Trabajamos bajo esquemas nacionales e internacionales de calidad e inocuidad alimentaria, garantizando un producto seguro y trazable en cada etapa.</p>
+    </div>
+    <div class="certs">
+      <div class="cert reveal">
+        <div class="seal">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2 3 6v6c0 5 3.8 8.5 9 10 5.2-1.5 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div class="yr">2021</div>
+        <h3>Tico&nbsp;BPA</h3>
+        <p>Certificación nacional en Buenas Prácticas Agrícolas para el cultivo.</p>
+      </div>
+      <div class="cert reveal">
+        <div class="seal">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15 0 18M12 3c-2.5 2.7-2.5 15 0 18"/></svg>
+        </div>
+        <div class="yr">2022</div>
+        <h3>GLOBALG.A.P.</h3>
+        <p>Estándar internacional de Buenas Prácticas Agrícolas reconocido a nivel mundial.</p>
+      </div>
+      <div class="cert reveal">
+        <div class="seal">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5l-8-3Z"/><circle cx="12" cy="11" r="3"/></svg>
+        </div>
+        <div class="yr">2023</div>
+        <h3>FSSC&nbsp;22000</h3>
+        <p>Sistema de Gestión de la Inocuidad de los Alimentos para empaque y valor agregado.</p>
+      </div>
+    </div>
+    <p class="reveal" style="text-align:center;color:var(--ink-2);max-width:44em;margin:30px auto 0;font-size:.95rem">
+      Nuestra operación se rige por las normas ISO&nbsp;22000:2018, ISO/TS&nbsp;22002-1 y los requisitos adicionales FSSC&nbsp;22000, sumados a los requerimientos reglamentarios y de nuestros clientes.
+    </p>
+  </div>
+</section>
+
+<!-- ============ MISION / VISION / VALORES ============ -->
+<section class="sec" id="mision">
+  <div class="wrap">
+    <div class="mv-grid">
+      <div class="mv reveal">
+        <h3><span class="script">Misión</span></h3>
+        <p>Satisfacer las necesidades de los consumidores costarricenses ofreciendo hongos nacionales de alta calidad. Nos comprometemos a impulsar el crecimiento de la empresa y de nuestros colaboradores, maximizando la eficiencia, optimizando los recursos y ofreciendo productos diferenciados que se destacan en el mercado.</p>
+      </div>
+      <div class="mv reveal">
+        <h3><span class="script">Visión</span></h3>
+        <p>Ser para el 2027 la empresa líder en la producción de hongos en Costa Rica, reconocida por su innovación tecnológica, capacidad productiva y eficiencia operativa; fidelizando a los clientes mediante productos de alta calidad e inocuidad y consolidándonos como referencia del mercado nacional.</p>
+      </div>
+    </div>
+    <div class="values reveal">
+      <div class="vh"><h3>Nuestros valores</h3></div>
+      <div class="vlist">
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg></div><h4>Respeto</h4><p>Reconocer y valorar a las personas y su entorno.</p></div>
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/></svg></div><h4>Transparencia</h4><p>Apertura y claridad en cada proceso y decisión.</p></div>
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="m12 2 3 6.5 7 .6-5.3 4.6L18 21l-6-3.4L6 21l1.3-7.3L2 9.1l7-.6L12 2Z"/></svg></div><h4>Calidad</h4><p>Atributos que superan las expectativas del cliente.</p></div>
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3v18M5 8l7-5 7 5"/><path d="M5 8v8l7 5 7-5V8"/></svg></div><h4>Honestidad</h4><p>Integridad y sinceridad en acciones y palabras.</p></div>
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2v20M2 7l10 5 10-5"/></svg></div><h4>Diferenciación</h4><p>Atributos únicos que nos destacan en el mercado.</p></div>
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></div><h4>Orientación al cliente</h4><p>El cliente en el centro de cada decisión.</p></div>
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg></div><h4>Responsabilidad social</h4><p>Compromiso ético con la sociedad y el ambiente.</p></div>
+        <div class="vitem"><div class="vi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 12a9 9 0 0 1 9-9c4 0 7 2.5 8 6"/><path d="M21 12a9 9 0 0 1-9 9c-4 0-7-2.5-8-6"/><path d="M3 4v5h5M21 20v-5h-5"/></svg></div><h4>Mejora continua</h4><p>Procesos en constante evolución y desarrollo.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="sec" id="contacto">
+  <div class="wrap contact-grid">
+    <div class="contact-copy reveal">
+      <div class="eyebrow">Contáctenos</div>
+      <h2>Hagamos un pedido</h2>
+      <p>Atendemos supermercados, distribuidores, restaurantes y comercios en todo el país. Escríbanos y le ayudamos a encontrar la presentación ideal para su negocio.</p>
+      <ul class="cinfo">
+        <li>
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+          <div><div class="k">Pedidos</div><a class="v" href="mailto:pedidos@gabcr.com">pedidos@gabcr.com</a></div>
+        </li>
+        <li>
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg></span>
+          <div><div class="k">Teléfono · Celular</div><span class="v">Tel. 4052-2289 &nbsp;·&nbsp; Cel. 7052-0164</span></div>
+        </li>
+        <li>
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <div><div class="k">Planta La Chinchilla</div><span class="v">Cuesta La Chinchilla, 2&nbsp;km norte de la Municipalidad de Oreamuno, Cartago, Costa Rica</span></div>
+        </li>
+      </ul>
+      <a href="mailto:pedidos@gabcr.com" class="btn btn-solid" style="margin-top:30px">Escribir un correo</a>
+    </div>
+    <div class="contact-art reveal">
+      <div class="crest">
+        <div class="inner">
+          <svg width="40" height="40" viewBox="0 0 100 100" style="margin-bottom:10px"><g stroke="#A9824C" stroke-width="2.6" stroke-linecap="round" fill="none"><circle cx="50" cy="50" r="8"/><g class="rays4"></g></g></svg>
+          <div class="name">Volterra</div>
+          <div class="sub">Agaricus Bisporus S.A.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="name">
+          <svg width="26" height="26" viewBox="0 0 100 100"><g stroke="#F4EFE1" stroke-width="2.6" stroke-linecap="round" fill="none"><circle cx="50" cy="50" r="8"/><g class="rays5"></g></g></svg>
+          Volterra
+        </div>
+        <p>Hongos frescos cultivados en Cartago, Costa Rica, por Agaricus Bisporus S.A. Calidad e inocuidad, del campo a su mesa.</p>
+        <div class="badges">
+          <span class="badge">Tico BPA</span>
+          <span class="badge">GLOBALG.A.P.</span>
+          <span class="badge">FSSC 22000</span>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Navegación</h4>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#productos">Productos</a>
+        <a href="#inocuidad">Inocuidad</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contacto</h4>
+        <a href="mailto:pedidos@gabcr.com">pedidos@gabcr.com</a>
+        <p>Tel. 4052-2289</p>
+        <p>Cel. 7052-0164</p>
+        <p>Oreamuno, Cartago, C.R.</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2025 Agaricus Bisporus S.A. · Marca Volterra. Todos los derechos reservados.</span>
+      <span>Hecho en Costa Rica</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // build starburst rays for every emblem
+  function buildRays(group,count,inner,outer){
+    let ns='http://www.w3.org/2000/svg';
+    for(let i=0;i<count;i++){
+      let a=(i/count)*Math.PI*2;
+      let l=(i%2===0)?outer:inner;
+      let x1=50+Math.cos(a)*13, y1=50+Math.sin(a)*13;
+      let x2=50+Math.cos(a)*l, y2=50+Math.sin(a)*l;
+      let line=document.createElementNS(ns,'line');
+      line.setAttribute('x1',x1);line.setAttribute('y1',y1);
+      line.setAttribute('x2',x2);line.setAttribute('y2',y2);
+      group.appendChild(line);
+    }
+  }
+  document.querySelectorAll('#rays,.rays2,.rays3,.rays4,.rays5').forEach(g=>buildRays(g,24,30,44));
+
+  // image fallback -> elegant SVG mushroom
+  function fb(img){
+    var w=img.closest('.imgwrap'); if(!w) return;
+    img.style.display='none';
+    var d=document.createElement('div'); d.className='fb';
+    d.innerHTML='<svg width="46%" viewBox="0 0 120 120" fill="none" stroke="#A9824C" stroke-width="2.2"><path d="M22 56c0-21 17-34 38-34s38 13 38 34c0 6-76 6-76 0Z" fill="rgba(169,130,76,.08)"/><path d="M48 56c2 18 0 32-4 40h32c-4-8-6-22-4-40" fill="rgba(34,43,69,.04)"/><path d="M40 50c4-4 10-5 14-2M66 50c4-4 10-5 14-2"/></svg>';
+    w.appendChild(d);
+  }
+
+  // nav scroll state
+  var nav=document.getElementById('nav');
+  window.addEventListener('scroll',function(){
+    if(window.scrollY>40)nav.classList.add('scrolled');else nav.classList.remove('scrolled');
+  });
+
+  // mobile menu
+  var mm=document.getElementById('mobileMenu');
+  document.getElementById('burger').onclick=function(){mm.classList.add('open')};
+  document.getElementById('closeMenu').onclick=function(){mm.classList.remove('open')};
+  mm.querySelectorAll('a').forEach(a=>a.onclick=()=>mm.classList.remove('open'));
+
+  // reveal on scroll
+  var io=new IntersectionObserver(function(es){
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*0.08)+'s';io.observe(el);});
+</script>
+</body>
+</html>
